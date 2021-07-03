@@ -6,7 +6,7 @@ namespace KawashimaBattleRoyaleCommon.Packets.Learner {
         public string username { get; set; }
         public string password { get; set; }
 
-        public LearnerLoginPacket(string username = null, string password = null) {
+        public LearnerLoginPacket(string username, string password) {
             this.PacketType = PacketType.LEARNER_LOGIN;
 
             this.username = username;

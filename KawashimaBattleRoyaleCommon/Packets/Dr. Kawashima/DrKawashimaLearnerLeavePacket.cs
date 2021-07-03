@@ -2,11 +2,11 @@ using System;
 using Newtonsoft.Json;
 
 namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
-    public class DrKawashimaLearnerLogoutPacket : Packet {
+    public class DrKawashimaLearnerLeavePacket : Packet {
         public int    userid   { get; set; }
 
-        public DrKawashimaLearnerLogoutPacket(int userid) {
-            this.PacketType = PacketType.DRKAWASHIMA_LEARNER_LOGOUT;
+        public DrKawashimaLearnerLeavePacket(int userid) {
+            this.PacketType = PacketType.DRKAWASHIMA_LEARNER_LEAVE;
 
             this.userid = userid;
         }
@@ -15,7 +15,7 @@ namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
             return JsonConvert.SerializeObject(this);
         }
         public override void ParseData(string data) {
-            DrKawashimaLearnerLogoutPacket parsedPacket = JsonConvert.DeserializeObject<DrKawashimaLearnerLogoutPacket>(data);
+            DrKawashimaLearnerLeavePacket parsedPacket = JsonConvert.DeserializeObject<DrKawashimaLearnerLeavePacket>(data);
 
             if (parsedPacket == null) throw new FormatException();
             

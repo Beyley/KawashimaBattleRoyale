@@ -6,7 +6,20 @@ using EeveeTools.Servers.WebSockets;
 namespace KawashimaBattleRoyaleServer {
     public class Server : WebSocketServer {
         public static List<Client> Players = new();
+        public static List<Client> IngamePlayers = new();
 
+        public static void NotifyAllAboutClientJoin(Client client) {
+            foreach (Client currentClient in Players) {
+                currentClient.NotifyAboutClientJoin(client);
+            }
+        }
+        
+        public static void NotifyAllAboutClientLeave(Client client) {
+            foreach (Client currentClient in Players) {
+                currentClient.NotifyAboutClientLeave(client);
+            }
+        }
+        
         public static void NotifyAllAboutLogin(Client client) {
             foreach (Client currentClient in Players) {
                 currentClient.NotifyAboutLogin(client);

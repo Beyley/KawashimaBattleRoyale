@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using KawashimaBattleRoyaleClient.Screens;
 using KawashimaBattleRoyaleCommon;
@@ -18,7 +19,7 @@ namespace KawashimaBattleRoyaleClient {
 
         public OnlineState State = OnlineState.OFFLINE;
 
-        public Player Player = new Player("", -1);
+        public Player Player = new Player("", -1, false);
         
         public bool LoggedIn {
             get {
@@ -26,7 +27,7 @@ namespace KawashimaBattleRoyaleClient {
             }
         }
 
-        public List<Player> Players = new ();
+        public Dictionary<int, Player> OnlineClients = new();
         public EventHandler onPlayersChanged;
         
         public OnlineHandler(string location) {
@@ -45,44 +46,70 @@ namespace KawashimaBattleRoyaleClient {
 
             switch (tempPacket.PacketType) {
                 case PacketType.DRKAWASHIMA_LEARNER_LOGIN: {
-                    DrKawashimaLearnerLoginPacket packet = new();
+                    DrKawashimaLearnerLoginPacket packet = new(null, -1, false);
                     packet.Deserialize(args.Data);
 
                     if (packet.Username == this.Player.Username) {
-                        this.Player = new(packet.Username, packet.UserId);
+                        this.Player = new(packet.Username, packet.UserId, packet.Ingame);
                         this.State = OnlineState.LOGGED_IN;
                         Console.WriteLine($"You are logged in!");
+                        NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Blue, "Logged in!", 5000);
 
-                        this.onPlayersChanged?.Invoke(null, null);
+                        this.onPlayersChanged?.Invoke(null, null!);
                     }
                     else {
                         //Check if player is in the list
                         int PlayerIndex = -1;
-                        for (int i = 0; i < this.Players.Count; i++) {
-                            Player player = this.Players[i];
-                            if (player.UserId == packet.UserId) {
-                                PlayerIndex = i;
+                        foreach (KeyValuePair<int, Player> entry in this.OnlineClients) {
+                            if (entry.Key == packet.UserId) {
+                                PlayerIndex = entry.Key;
                                 
                                 //Update the player to the new data
-                                player.Username = packet.Username;
+                                entry.Value.Username = packet.Username;
                                 
-                                this.onPlayersChanged?.Invoke(null, null);
+                                this.onPlayersChanged?.Invoke(null, null!);
+                                break;
                             }
                         }
-                        
+
                         //Add the player to the list if they are not there
                         if (PlayerIndex == -1) {
-                            this.Players.Add(new(packet.Username, packet.UserId));
+                            this.OnlineClients.Add(packet.UserId, new(packet.Username, packet.UserId, packet.Ingame));
                             
-                            this.onPlayersChanged?.Invoke(null, null);
+                            this.onPlayersChanged?.Invoke(null, null!);
                         }
 
                     }
 
                     break;
                 }
-                case PacketType.LEARNER_LOGOUT: {
-                    //TODO IMPLEMENT THIS
+                case PacketType.DRKAWASHIMA_LEARNER_LOGOUT: {
+                    DrKawashimaLearnerLogoutPacket packet = new(-1);
+                    packet.Deserialize(args.Data);
+
+                    foreach (KeyValuePair<int, Player> client in this.OnlineClients) {
+                        if (client.Key == packet.userid) {
+                            this.OnlineClients.Remove(client.Key);
+                            
+                            this.onPlayersChanged?.Invoke(null, null!);
+                            break;
+                        }
+                    }
+                    
+                    break;
+                }
+                case PacketType.DRKAWASHIMA_LEARNER_JOIN: {
+                    DrKawashimaLearnerJoinPacket packet = new(-1);
+                    packet.Deserialize(args.Data);
+                    
+                    foreach (KeyValuePair<int, Player> client in this.OnlineClients) {
+                        if (client.Key == packet.userid) {
+                            this.OnlineClients.Remove(client.Key);
+                            
+                            this.onPlayersChanged?.Invoke(null, null!);
+                            break;
+                        }
+                    }
                     
                     break;
                 }
@@ -122,13 +149,22 @@ namespace KawashimaBattleRoyaleClient {
             
             LearnerLoginPacket packet = new(username, hashedPassword);
             
-            this.SendString(packet.Serialize());
+            this.Send(packet);
 
             this.State = OnlineState.LOGGING_IN;
         }
         
         public void RequestGameData() {
+            //TODO IMPLEMENT THIS
+        }
+
+        public void JoinGame() {
+            Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");
+            pKawashimaGame.OnlineManager.State = OnlineState.IN_GAME;
+
+            LearnerStartGamePacket packet = new();
             
+            this.Send(packet);
         }
 
         public void Connect() {
@@ -138,9 +174,12 @@ namespace KawashimaBattleRoyaleClient {
         public void Close() { this.Socket.Close(); OnDisconnect(); }
         public void CloseAsync() { this.Socket.CloseAsync(); OnDisconnect(); }
 
-        public void SendBytes(byte[] bytes) => this.Socket.Send(bytes);
-        public void SendString(string data) => this.Socket.Send(data);
-
+        // public void SendBytes(byte[] bytes) => this.Socket.Send(bytes);
+        // public void SendString(string data) => this.Socket.Send(data);
+        public void Send(Serializable dataToSend) {
+            this.Socket.Send(dataToSend.Serialize());
+        }
+        
         public bool IsConnected => this.Socket.IsAlive;
     }
 

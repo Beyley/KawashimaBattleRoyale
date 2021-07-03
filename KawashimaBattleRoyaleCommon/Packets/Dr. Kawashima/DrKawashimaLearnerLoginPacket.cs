@@ -6,12 +6,14 @@ namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
     public class DrKawashimaLearnerLoginPacket : Packet {
         public string Username { get; set; }
         public int    UserId   { get; set; }
+        public bool Ingame { get; set; }
 
-        public DrKawashimaLearnerLoginPacket(string username = null, int userId = -1) {
+        public DrKawashimaLearnerLoginPacket(string username, int userId, bool ingame) {
             this.PacketType = PacketType.DRKAWASHIMA_LEARNER_LOGIN;
 
             this.Username = username;
             this.UserId = userId;
+            this.Ingame = ingame;
         }
 
         public override string GetData() {
@@ -24,6 +26,7 @@ namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
             
             this.Username = parsedPacket.Username;
             this.UserId   = parsedPacket.UserId;
+            this.Ingame   = parsedPacket.Ingame;
         }
     }
 }

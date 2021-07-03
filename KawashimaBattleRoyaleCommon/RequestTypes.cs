@@ -12,6 +12,14 @@ namespace KawashimaBattleRoyaleCommon {
         /// </summary>
         LEARNER_LOGOUT,
         /// <summary>
+        /// Sent to the server when the client joins the game
+        /// </summary>
+        LEARNER_JOIN_GAME,
+        /// <summary>
+        /// Sent to the server when the client leaves the game
+        /// </summary>
+        LEARNER_LEAVE_GAME,
+        /// <summary>
         /// Sent to the server to request the current game state
         /// </summary>
         LEARNER_GET_GAME_DATA,
@@ -28,5 +36,13 @@ namespace KawashimaBattleRoyaleCommon {
         /// Sent to the client to update their game state
         /// </summary>
         DRKARASHIMA_GAME_DATA,
+        /// <summary>
+        /// Sent to the client to say a new player has joined the game
+        /// </summary>
+        DRKAWASHIMA_LEARNER_JOIN,
+        /// <summary>
+        /// Sent to the client to say a new player has left the game (but still online)
+        /// </summary>
+        DRKAWASHIMA_LEARNER_LEAVE,
     }
 }

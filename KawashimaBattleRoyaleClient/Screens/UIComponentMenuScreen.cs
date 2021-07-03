@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using PeppyCodeEngineGL.Engine;
 using PeppyCodeEngineGL.Engine.Audio;
@@ -27,13 +28,15 @@ namespace KawashimaBattleRoyaleClient.Screens {
             float y = 10;
 
             pButton button = new pButton("Login/Connect!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
+                Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");
                 if (!pKawashimaGame.OnlineManager.IsConnected) {
                     pKawashimaGame.OnlineManager.Connect();
                     
                     //TODO implement passwords
                     pKawashimaGame.OnlineManager.Login(this.usernameInputBox.Box.Text, "");
 
-                }
+                } else
+                    NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You are already online!", 5000);
             });
             y += 35;
             this.SpriteManager.Add(button.SpriteCollection);
@@ -54,6 +57,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
             onlineUserCount = new pText($"Online Players: 0", 20, new Vector2(10, y), 1, true, Color.White);
             this.SpriteManager.Add(onlineUserCount);
 
+            Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");
             pKawashimaGame.OnlineManager.onPlayersChanged += onPlayersChanged;
             
             pKawashimaGame.LoadComplete();
@@ -67,11 +71,12 @@ namespace KawashimaBattleRoyaleClient.Screens {
         }
 
         private void onPlayersChanged(object? sender, object args) {
-            onlineUserCount.Text = $"Online Players: {pKawashimaGame.OnlineManager.Players.Count + 1}";
+            onlineUserCount.Text = $"Online Players: {pKawashimaGame.OnlineManager.OnlineClients.Count + 1}";
         }
         
         protected override void Dispose(bool disposing) {
             this.SpriteManager.Dispose();
+            Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");
             pKawashimaGame.OnlineManager.onPlayersChanged -= onPlayersChanged;
 
             base.Dispose(disposing);
