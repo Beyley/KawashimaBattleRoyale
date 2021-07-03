@@ -39,6 +39,7 @@ namespace KawashimaBattleRoyaleServer {
                 case PacketType.LEARNER_LOGIN: {
                     LearnerLoginPacket packet = new();
                     packet.Deserialize(clientData);
+                    Console.WriteLine($"{packet.username} is logging in!");
 
                     this.Username = packet.username;
                     if (!CheckPassword(packet.password)) {
@@ -49,7 +50,8 @@ namespace KawashimaBattleRoyaleServer {
                     Server.NotifyClientAboutAll(this);
                     Server.Players.Add(this);
                     Server.NotifyAllAboutLogin(this);
-                    
+                    Console.WriteLine($"{packet.username} is logged in!");
+
                     break;
                 }
                 case PacketType.LEARNER_LOGOUT: {
@@ -73,9 +75,12 @@ namespace KawashimaBattleRoyaleServer {
 
         public void NotifyAboutLogin(Client client) {
             DrKawashimaLearnerLoginPacket packet = new DrKawashimaLearnerLoginPacket(client.Username, client.UserId);
+
+            this.Connection.Send(packet.Serialize());
         }
         
         public void Logout() {
+            Console.WriteLine($"{this.Username} is logging out!");
             Server.Players.Remove(this);
 
             foreach (Client client in Server.Players) {

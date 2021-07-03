@@ -42,7 +42,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
             this.SpriteManager.Add(usernameInputBox.SpriteCollection);
             
             button = new pButton("Start!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
-                if (pKawashimaGame.Socket.LoggedIn)
+                if (pKawashimaGame.Socket != null && pKawashimaGame.Socket.LoggedIn)
                     pKawashimaGame.ChangeMode(new UIComponentGameplayScreen());
                 else
                     NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You need to be logged in!", 5000);

@@ -18,7 +18,7 @@ namespace KawashimaBattleRoyaleClient {
 
         public OnlineState State = OnlineState.OFFLINE;
 
-        public Player Player;
+        public Player Player = new Player("", -1);
         
         public bool LoggedIn {
             get {
@@ -47,8 +47,11 @@ namespace KawashimaBattleRoyaleClient {
                     DrKawashimaLearnerLoginPacket packet = new();
                     packet.Deserialize(args.Data);
 
-                    if (packet.Username == this.Player.Username)
+                    if (packet.Username == this.Player.Username) {
                         this.Player = new(packet.Username, packet.UserId);
+                        this.State = OnlineState.LOGGED_IN;
+                        Console.WriteLine($"You are logged in!");
+                    }
                     else {
                         //Check if player is in the list
                         int PlayerIndex = -1;
@@ -89,6 +92,8 @@ namespace KawashimaBattleRoyaleClient {
         /// </summary>
         public void OnDisconnect() {
             State = OnlineState.OFFLINE;
+            
+            Console.WriteLine("Disconnected!");
         }
 
         /// <summary>
