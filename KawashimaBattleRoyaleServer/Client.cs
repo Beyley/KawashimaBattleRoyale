@@ -37,7 +37,7 @@ namespace KawashimaBattleRoyaleServer {
             
             switch (tempPacket.PacketType) {
                 case PacketType.LEARNER_LOGIN: {
-                    LearnerLoginPacket packet = new LearnerLoginPacket();
+                    LearnerLoginPacket packet = new();
                     packet.Deserialize(clientData);
 
                     this.Username = packet.username;
@@ -46,6 +46,7 @@ namespace KawashimaBattleRoyaleServer {
                         return;
                     }
 
+                    Server.NotifyClientAboutAll(this);
                     Server.Players.Add(this);
                     Server.NotifyAllAboutLogin(this);
                     

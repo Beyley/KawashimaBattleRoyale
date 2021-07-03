@@ -4,7 +4,7 @@ using PeppyCodeEngineGL.Engine;
 
 namespace KawashimaBattleRoyaleClient {
     public class pKawashimaGame : pEngineGame {
-        public static OnlineHandler Socket;
+        public static OnlineHandler? Socket;
         
         public pKawashimaGame() : base(new UIComponentMenuScreen()) {
             this.IsMouseVisible = true;

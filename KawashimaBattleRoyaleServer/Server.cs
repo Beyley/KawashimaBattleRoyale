@@ -13,12 +13,14 @@ namespace KawashimaBattleRoyaleServer {
             }
         }
         
+        public static void NotifyClientAboutAll(Client client) {
+            foreach (Client currentClient in Players) {
+                client.NotifyAboutLogin(currentClient);
+            }
+        }
+        
         public Server(string location, Type clientHandlerType) : base(location, clientHandlerType) {
             
         }
-
-        public string Location => this.Server.Location;
-
-        public int Port => this.Server.Port;
     }
 }
