@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KawashimaBattleRoyaleClient", "KawashimaBattleRoyaleClient\KawashimaBattleRoyaleClient.csproj", "{71BD1D81-1E61-4C91-AB28-0738F66223C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KawashimaBattleRoyaleServer", "KawashimaBattleRoyaleServer\KawashimaBattleRoyaleServer.csproj", "{6B88D90A-EC8D-495C-B186-E4B03A838A43}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71BD1D81-1E61-4C91-AB28-0738F66223C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71BD1D81-1E61-4C91-AB28-0738F66223C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71BD1D81-1E61-4C91-AB28-0738F66223C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71BD1D81-1E61-4C91-AB28-0738F66223C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
