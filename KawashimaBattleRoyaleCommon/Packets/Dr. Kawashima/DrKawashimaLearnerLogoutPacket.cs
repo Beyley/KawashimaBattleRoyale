@@ -5,7 +5,7 @@ namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
     public class DrKawashimaLearnerLogoutPacket : Packet {
         public int    userid   { get; set; }
 
-        public DrKawashimaLearnerLogoutPacket(int userid) {
+        public DrKawashimaLearnerLogoutPacket(int userid = -1) {
             this.PacketType = PacketType.DRKAWASHIMA_LEARNER_LOGOUT;
 
             this.userid = userid;

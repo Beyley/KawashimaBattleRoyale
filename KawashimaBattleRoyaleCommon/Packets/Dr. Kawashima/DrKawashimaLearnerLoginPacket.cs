@@ -4,13 +4,14 @@ using Newtonsoft.Json;
 
 namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
     public class DrKawashimaLearnerLoginPacket : Packet {
-        public string username { get; set; }
-        public int    userid   { get; set; }
+        public string Username { get; set; }
+        public int    Userid   { get; set; }
 
-        public DrKawashimaLearnerLoginPacket(string username) {
+        public DrKawashimaLearnerLoginPacket(string username = null, int userid = -1) {
             this.PacketType = PacketType.DRKAWASHIMA_LEARNER_LOGIN;
 
-            this.username = username;
+            this.Username = username;
+            this.Userid = userid;
         }
 
         public override string GetData() {
@@ -21,8 +22,8 @@ namespace KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima {
 
             if (parsedPacket == null) throw new FormatException();
             
-            this.username = parsedPacket.username;
-            this.userid   = parsedPacket.userid;
+            this.Username = parsedPacket.Username;
+            this.Userid   = parsedPacket.Userid;
         }
     }
 }
