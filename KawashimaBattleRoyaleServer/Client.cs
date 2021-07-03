@@ -13,33 +13,13 @@ namespace KawashimaBattleRoyaleServer {
             // throw new NotImplementedException();
         }
         protected override void OnConnectionClose() {
-            this.Logout();
+            
         }
         protected override void OnConnectionError(Exception error) {
-            this.Logout();
+            
         }
         protected override void OnMessage(string message) {
-            if (!this.isLoggedIn) {
-                this.username = message;
-
-                this.Connection.Send("logged in");
-                Server.players.Add(this);
-                return;
-            }
-
-            switch (message) {
-                case "get gamedata": {
-                    break;
-                }
-                case "logout": {
-                    this.Logout();
-                    break;
-                }
-            }
-        }
-
-        public void Logout() {
-            Server.players.Remove(this);
+            
         }
     }
 }
