@@ -5,6 +5,15 @@
         <TargetFramework>net5.0</TargetFramework>
         <AssemblyName>KawashimaBattleRoyaleClient</AssemblyName>
         <RootNamespace>KawashimaBattleRoyaleClient</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PeppyCodeEngine\PeppyCodeEngineGL\PeppyCodeEngineGL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
+    </ItemGroup>
 
 </Project>

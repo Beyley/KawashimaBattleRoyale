@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KawashimaBattleRoyaleClient
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KawashimaBattleRoyaleServer", "KawashimaBattleRoyaleServer\KawashimaBattleRoyaleServer.csproj", "{6B88D90A-EC8D-495C-B186-E4B03A838A43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeppyCodeEngineGL", "PeppyCodeEngine\PeppyCodeEngineGL\PeppyCodeEngineGL.csproj", "{F27A4D18-2415-449E-9D62-A6FE9A7F3307}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B88D90A-EC8D-495C-B186-E4B03A838A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F27A4D18-2415-449E-9D62-A6FE9A7F3307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F27A4D18-2415-449E-9D62-A6FE9A7F3307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F27A4D18-2415-449E-9D62-A6FE9A7F3307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F27A4D18-2415-449E-9D62-A6FE9A7F3307}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

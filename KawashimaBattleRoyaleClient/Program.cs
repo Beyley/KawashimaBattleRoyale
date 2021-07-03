@@ -3,7 +3,8 @@
 namespace KawashimaBattleRoyaleClient {
     class Program {
         static void Main(string[] args) {
-            Console.WriteLine("Starting Client!");
+            using (var game = new pKawashimaGame())
+                game.Run();
         }
     }
 }
