@@ -14,6 +14,8 @@ namespace KawashimaBattleRoyaleClient.Screens {
         
         protected SpriteManager SpriteManager = new();
 
+        private pTextBox usernameInputBox;
+
         public override void Draw(GameTime gameTime) {
             this.SpriteManager.Draw();
 
@@ -21,14 +23,30 @@ namespace KawashimaBattleRoyaleClient.Screens {
         }
 
         public override void Initialize() {
-            pButton button;
+            float y = 10;
 
-            button = new pButton("Send test data!", new Vector2(10, 10), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
-                if (pKawashimaGame.Socket.IsConnected) {
-                    pKawashimaGame.Socket.SendString("Hello World!");
+            pButton button = new pButton("Login!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
+                if (!pKawashimaGame.Socket.IsConnected) {
+                    pKawashimaGame.Socket.Connect();
+                    pKawashimaGame.Socket.username = this.usernameInputBox.Box.Text;
+                    pKawashimaGame.Socket.SendString(this.usernameInputBox.Box.Text);
+
                 }
             });
+            y += 35;
+            this.SpriteManager.Add(button.SpriteCollection);
+
+            usernameInputBox = new pTextBox("username", 15, new Vector2(10, y), new Vector2(150, 25), 1);
+            y += 35;
+            this.SpriteManager.Add(usernameInputBox.SpriteCollection);
             
+            button = new pButton("Start!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
+                if (pKawashimaGame.Socket.IsLoggedIn)
+                    pKawashimaGame.ChangeMode(new UIComponentGameplayScreen());
+                else
+                    NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You need to be logged in!", 5000);
+            });
+            y += 35;
             this.SpriteManager.Add(button.SpriteCollection);
             
             pKawashimaGame.LoadComplete();

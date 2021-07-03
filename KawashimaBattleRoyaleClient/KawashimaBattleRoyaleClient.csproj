@@ -9,10 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\KawashimaBattleRoyaleCommon\KawashimaBattleRoyaleCommon.csproj" />
       <ProjectReference Include="..\PeppyCodeEngine\PeppyCodeEngineGL\PeppyCodeEngineGL.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
     </ItemGroup>
 
