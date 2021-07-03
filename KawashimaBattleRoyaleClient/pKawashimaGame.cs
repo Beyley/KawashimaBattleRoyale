@@ -4,14 +4,14 @@ using PeppyCodeEngineGL.Engine;
 
 namespace KawashimaBattleRoyaleClient {
     public class pKawashimaGame : pEngineGame {
-        public static OnlineHandler? Socket;
+        public static OnlineHandler? OnlineManager;
         
         public pKawashimaGame() : base(new UIComponentMenuScreen()) {
             this.IsMouseVisible = true;
         }
 
         protected override void Initialize() {
-            Socket = new OnlineHandler("ws://127.0.0.1:1231/kawashima/");
+            OnlineManager = new OnlineHandler("ws://127.0.0.1:1231/kawashima/");
             // Socket.Connect();
 
             base.Initialize();

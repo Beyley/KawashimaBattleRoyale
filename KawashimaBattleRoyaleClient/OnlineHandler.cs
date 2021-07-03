@@ -27,6 +27,7 @@ namespace KawashimaBattleRoyaleClient {
         }
 
         public List<Player> Players = new ();
+        public EventHandler onPlayersChanged;
         
         public OnlineHandler(string location) {
             this.Socket = new WebSocket(location);
@@ -51,6 +52,8 @@ namespace KawashimaBattleRoyaleClient {
                         this.Player = new(packet.Username, packet.UserId);
                         this.State = OnlineState.LOGGED_IN;
                         Console.WriteLine($"You are logged in!");
+
+                        this.onPlayersChanged?.Invoke(null, null);
                     }
                     else {
                         //Check if player is in the list
@@ -62,14 +65,25 @@ namespace KawashimaBattleRoyaleClient {
                                 
                                 //Update the player to the new data
                                 player.Username = packet.Username;
+                                
+                                this.onPlayersChanged?.Invoke(null, null);
                             }
                         }
                         
                         //Add the player to the list if they are not there
-                        if(PlayerIndex == -1)
+                        if (PlayerIndex == -1) {
                             this.Players.Add(new(packet.Username, packet.UserId));
+                            
+                            this.onPlayersChanged?.Invoke(null, null);
+                        }
+
                     }
 
+                    break;
+                }
+                case PacketType.LEARNER_LOGOUT: {
+                    //TODO IMPLEMENT THIS
+                    
                     break;
                 }
             }

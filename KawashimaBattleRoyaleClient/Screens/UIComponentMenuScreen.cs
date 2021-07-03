@@ -15,6 +15,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
         protected SpriteManager SpriteManager = new();
 
         private pTextBox usernameInputBox;
+        public pText onlineUserCount;
 
         public override void Draw(GameTime gameTime) {
             this.SpriteManager.Draw();
@@ -26,11 +27,11 @@ namespace KawashimaBattleRoyaleClient.Screens {
             float y = 10;
 
             pButton button = new pButton("Login/Connect!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
-                if (!pKawashimaGame.Socket.IsConnected) {
-                    pKawashimaGame.Socket.Connect();
+                if (!pKawashimaGame.OnlineManager.IsConnected) {
+                    pKawashimaGame.OnlineManager.Connect();
                     
                     //TODO implement passwords
-                    pKawashimaGame.Socket.Login(this.usernameInputBox.Box.Text, "");
+                    pKawashimaGame.OnlineManager.Login(this.usernameInputBox.Box.Text, "");
 
                 }
             });
@@ -42,13 +43,18 @@ namespace KawashimaBattleRoyaleClient.Screens {
             this.SpriteManager.Add(usernameInputBox.SpriteCollection);
             
             button = new pButton("Start!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
-                if (pKawashimaGame.Socket != null && pKawashimaGame.Socket.LoggedIn)
+                if (pKawashimaGame.OnlineManager != null && pKawashimaGame.OnlineManager.LoggedIn)
                     pKawashimaGame.ChangeMode(new UIComponentGameplayScreen());
                 else
                     NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You need to be logged in!", 5000);
             });
-            y += 35;
+            y += 40;
             this.SpriteManager.Add(button.SpriteCollection);
+
+            onlineUserCount = new pText($"Online Players: 0", 20, new Vector2(10, y), 1, true, Color.White);
+            this.SpriteManager.Add(onlineUserCount);
+
+            pKawashimaGame.OnlineManager.onPlayersChanged += onPlayersChanged;
             
             pKawashimaGame.LoadComplete();
 
@@ -60,8 +66,13 @@ namespace KawashimaBattleRoyaleClient.Screens {
             // this.renderer.EmitterLocation = InputManager.CursorPosition;
         }
 
+        private void onPlayersChanged(object? sender, object args) {
+            onlineUserCount.Text = $"Online Players: {pKawashimaGame.OnlineManager.Players.Count + 1}";
+        }
+        
         protected override void Dispose(bool disposing) {
             this.SpriteManager.Dispose();
+            pKawashimaGame.OnlineManager.onPlayersChanged -= onPlayersChanged;
 
             base.Dispose(disposing);
         }

@@ -14,8 +14,8 @@ namespace KawashimaBattleRoyaleClient.Screens {
         }
 
         public override void Initialize() {
-            pKawashimaGame.Socket.State = OnlineState.IN_GAME;
-            pKawashimaGame.Socket.RequestGameData();
+            pKawashimaGame.OnlineManager.State = OnlineState.IN_GAME;
+            pKawashimaGame.OnlineManager.RequestGameData();
             
             pKawashimaGame.LoadComplete();
 
