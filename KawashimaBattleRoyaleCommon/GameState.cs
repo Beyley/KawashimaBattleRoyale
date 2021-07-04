@@ -4,6 +4,6 @@ namespace KawashimaBattleRoyaleCommon {
             
         }
         
-        public int level;
+        public int Level = 0;
     }
 }
