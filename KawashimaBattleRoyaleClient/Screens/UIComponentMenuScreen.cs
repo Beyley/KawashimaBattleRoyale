@@ -54,7 +54,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
             y += 40;
             this.SpriteManager.Add(button.SpriteCollection);
 
-            onlineUserCount = new pText($"Online Players: 0", 20, new Vector2(10, y), 1, true, Color.White);
+            onlineUserCount = new pText($"Online Players: {pKawashimaGame.OnlineManager.OnlineClients.Count + (pKawashimaGame.OnlineManager.LoggedIn ? 1 : 0)}", 20, new Vector2(10, y), 1, true, Color.White);
             this.SpriteManager.Add(onlineUserCount);
 
             Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");

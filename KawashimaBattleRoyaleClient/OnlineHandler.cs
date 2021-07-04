@@ -166,6 +166,15 @@ namespace KawashimaBattleRoyaleClient {
             
             this.Send(packet);
         }
+        
+        public void LeaveGame() {
+            Debug.Assert(pKawashimaGame.OnlineManager != null, "pKawashimaGame.OnlineManager is null!");
+            pKawashimaGame.OnlineManager.State = OnlineState.IN_GAME;
+
+            LearnerEndGamePacket packet = new();
+            
+            this.Send(packet);
+        }
 
         public void Connect() {
             this.State = OnlineState.CONNECTED;
