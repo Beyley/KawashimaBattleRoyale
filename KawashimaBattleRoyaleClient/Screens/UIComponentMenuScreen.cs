@@ -46,8 +46,16 @@ namespace KawashimaBattleRoyaleClient.Screens {
             this.SpriteManager.Add(usernameInputBox.SpriteCollection);
             
             button = new pButton("Start!", new Vector2(10, y), new Vector2(150, 25),1, Color.Blue, delegate(object? sender, EventArgs args) {
-                if (pKawashimaGame.OnlineManager != null && pKawashimaGame.OnlineManager.LoggedIn)
-                    pKawashimaGame.ChangeMode(new UIComponentGameplayScreen());
+                if (pKawashimaGame.OnlineManager != null && pKawashimaGame.OnlineManager.LoggedIn) {
+                    if (pKawashimaGame.GameplayScreen == null)
+                        pKawashimaGame.GameplayScreen = new UIComponentGameplayScreen();
+                    else {
+                        pKawashimaGame.GameplayScreen.Dispose();
+                        pKawashimaGame.GameplayScreen = new UIComponentGameplayScreen();
+                    }
+                    
+                    pKawashimaGame.ChangeMode(pKawashimaGame.GameplayScreen);
+                }
                 else
                     NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You need to be logged in!", 5000);
             });
@@ -62,6 +70,8 @@ namespace KawashimaBattleRoyaleClient.Screens {
             
             pKawashimaGame.LoadComplete();
 
+            pKawashimaGame.Game.IsMouseVisible = true;
+            
             base.Initialize();
         }
         public override void Update(GameTime gameTime) {

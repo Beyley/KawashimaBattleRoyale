@@ -8,6 +8,8 @@ namespace KawashimaBattleRoyaleServer {
         public static List<Client> Players = new();
         public static List<Client> IngamePlayers = new();
 
+        public static Random r = new();
+
         public static void NotifyAllAboutClientJoin(Client client) {
             foreach (Client currentClient in Players) {
                 currentClient.NotifyAboutClientJoin(client);

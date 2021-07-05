@@ -28,8 +28,8 @@ namespace KawashimaBattleRoyaleClient.Screens {
         private Timer timer;
         private Task  task;
 
-        private Tuple<string, double, bool> currentAnswer = new("", double.NaN, true);
-        private Queue<Tuple<string, double>> nextAnswers = new();
+        private Tuple<string, double, bool, ProblemTypes> currentAnswer = new("", double.NaN, true, 0);
+        private Queue<Tuple<string, double, ProblemTypes>> nextAnswers = new();
 
         private Random r;
 
@@ -57,7 +57,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
             levelIndicator = new pText("Level: 0", 25, new Vector2(10, 300), 1, true, Color.White);
 
             inputBox.OnCommit += (sender, args) => {
-                if (currentAnswer.Item1 == "") return;
+                if (currentAnswer.Item1 == "" || this.inputBox.Box.Text == "") return;
 
                 try {
                     if (Math.Abs(double.Parse(inputBox.Box.Text) - currentAnswer.Item2) < 1.5)
@@ -74,11 +74,15 @@ namespace KawashimaBattleRoyaleClient.Screens {
 
                     this.levelIndicator.Text = $"Level: {this.State.Level}";
                 }
+
+                if (problemsDone % 2 == 0) {
+                    pKawashimaGame.OnlineManager.SendQuestion(this.currentAnswer.Item4);
+                }
                 
 
                 inputBox.Box.Text = "";
                 inputBox.FocusGot();
-                this.currentAnswer = new(this.currentAnswer.Item1, this.currentAnswer.Item2, true);
+                this.currentAnswer = new(this.currentAnswer.Item1, this.currentAnswer.Item2, true, this.currentAnswer.Item4);
 
                 this.nextProblem.Text = "?+?=?";
                 
@@ -110,9 +114,9 @@ namespace KawashimaBattleRoyaleClient.Screens {
                         if (this.currentAnswer.Item3) {
                             try {
                                 // Console.WriteLine("test");
-                                Tuple<string, double> nextAnswer = this.nextAnswers.Dequeue();
+                                Tuple<string, double, ProblemTypes> nextAnswer = this.nextAnswers.Dequeue();
 
-                                this.currentAnswer = new Tuple<string, double, bool>(nextAnswer.Item1, nextAnswer.Item2, false);
+                                this.currentAnswer = new Tuple<string, double, bool, ProblemTypes>(nextAnswer.Item1, nextAnswer.Item2, false, nextAnswer.Item3);
 
                                 this.currentProblem.Text = currentAnswer.Item1;
                             }
@@ -121,7 +125,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                             }
                         }
                         else {
-                            Tuple<string, double> nextAnswer = this.nextAnswers.Peek();
+                            Tuple<string, double, ProblemTypes> nextAnswer = this.nextAnswers.Peek();
 
                             this.nextProblem.Text = nextAnswer.Item1;
                         }
@@ -143,6 +147,8 @@ namespace KawashimaBattleRoyaleClient.Screens {
 
             pKawashimaGame.LoadComplete();
 
+            pKawashimaGame.Game.IsMouseVisible = true;
+            
             base.Initialize();
         }   
         
@@ -155,26 +161,31 @@ namespace KawashimaBattleRoyaleClient.Screens {
 
         public void ResetTimer() {
             this.timer.Dispose();
-            
-            this.timer = new(this.QuestionTimerTick, new AutoResetEvent(false), 0, 10000);
+
+            int period = 5000;
+            if (this.State.Level > 7)
+                period = 3000;
+                
+            this.timer = new(this.QuestionTimerTick, new AutoResetEvent(false), 0, period);
         }
 
-        public void GenerateNewProblem() {
-            ProblemTypes type;
+        public void GenerateNewProblem(ProblemTypes type = (ProblemTypes)1000) {
+            // ProblemTypes type;
             
-            if (State.Level <= 3) {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.SUBTRACT+1);
-            } else if(State.Level <= 5) {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.MULTIPLY+1);
-            } else if (State.Level <= 10) {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.DIVIDE+1);
-            } else if (State.Level <= 15) {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.MODULO+1);
-            } else if (State.Level <= 20) {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.POWER+1);
-            } else {
-                type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.FACTORIAL+1);
-            }
+            if((int)type == 1000)
+                if (State.Level <= 3) {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.SUBTRACT+1);
+                } else if(State.Level <= 5) {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.MULTIPLY+1);
+                } else if (State.Level <= 10) {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.DIVIDE+1);
+                } else if (State.Level <= 15) {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.MODULO+1);
+                } else if (State.Level <= 20) {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.ADDITION, (int)ProblemTypes.POWER+1);
+                } else {
+                    type = (ProblemTypes)r.Next((int)ProblemTypes.MULTIPLY, (int)ProblemTypes.FACTORIAL+1);
+                }
 
             switch (type) {
                 case ProblemTypes.ADDITION: {
@@ -204,7 +215,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                     finalString = finalString.Remove(finalString.Length - 3);
                     finalString += " = ?";
 
-                    nextAnswers.Enqueue(new (finalString, result));
+                    nextAnswers.Enqueue(new (finalString, result, type));
                     // Console.WriteLine("adding");
                     
                     break;
@@ -236,7 +247,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                     finalString = finalString.Remove(finalString.Length - 3);
                     finalString += " = ?";
 
-                    nextAnswers.Enqueue(new (finalString, result));
+                    nextAnswers.Enqueue(new (finalString, result, type));
                     // Console.WriteLine("adding");
 
                     break;
@@ -268,7 +279,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                     finalString = finalString.Remove(finalString.Length - 3);
                     finalString += " = ?";
 
-                    nextAnswers.Enqueue(new (finalString, result));
+                    nextAnswers.Enqueue(new (finalString, result, type));
                     // Console.WriteLine("adding");
                     
                     break;
@@ -300,7 +311,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                     finalString = finalString.Remove(finalString.Length - 3);
                     finalString += " = ?";
 
-                    nextAnswers.Enqueue(new (finalString, result));
+                    nextAnswers.Enqueue(new (finalString, result, type));
                     // Console.WriteLine("adding");
                     
                     break;
@@ -345,16 +356,5 @@ namespace KawashimaBattleRoyaleClient.Screens {
             
             base.Dispose(disposing);
         }
-    }
-
-    public enum ProblemTypes : int {
-        ADDITION   = 1,
-        SUBTRACT   = 2,
-        MULTIPLY   = 3,
-        DIVIDE     = 4,
-        MODULO     = 5,
-        SQUAREROOT = 6,
-        POWER      = 7,
-        FACTORIAL  = 8,
     }
 }

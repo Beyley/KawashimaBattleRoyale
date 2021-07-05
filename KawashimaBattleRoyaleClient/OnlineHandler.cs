@@ -113,6 +113,14 @@ namespace KawashimaBattleRoyaleClient {
                     
                     break;
                 }
+                case PacketType.DRKAWASHIMA_SEND_QUESTION: {
+                    DrKawashimaSendQuestionPacket packet = new(0);
+                    packet.Deserialize(args.Data);
+                    
+                    pKawashimaGame.GameplayScreen.GenerateNewProblem(packet.type);
+                    
+                    break;
+                }
             }
         }
 
@@ -152,6 +160,12 @@ namespace KawashimaBattleRoyaleClient {
             this.Send(packet);
 
             this.State = OnlineState.LOGGING_IN;
+        }
+
+        public void SendQuestion(ProblemTypes type) {
+            LearnerSendQuestionPacket packet = new(type);
+            
+            this.Send(packet);
         }
         
         public void RequestGameData() {

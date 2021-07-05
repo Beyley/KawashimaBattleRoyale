@@ -23,6 +23,10 @@ namespace KawashimaBattleRoyaleCommon {
         /// Sent to the server to request the current game state
         /// </summary>
         LEARNER_GET_GAME_DATA,
+        /// <summary>
+        /// Sent to the server to indicate that the client is sending a question to another client
+        /// </summary>
+        LEARNER_SEND_QUESTION,
         
         /// <summary>
         /// Sent to the client to say a new player has logged in
@@ -44,5 +48,20 @@ namespace KawashimaBattleRoyaleCommon {
         /// Sent to the client to say a new player has left the game (but still online)
         /// </summary>
         DRKAWASHIMA_LEARNER_LEAVE,
+        /// <summary>
+        /// Sent to a client to tell them that they recieved a question
+        /// </summary>
+        DRKAWASHIMA_SEND_QUESTION,
+    }
+    
+    public enum ProblemTypes {
+        ADDITION   = 1,
+        SUBTRACT   = 2,
+        MULTIPLY   = 3,
+        DIVIDE     = 4,
+        MODULO     = 5,
+        SQUAREROOT = 6,
+        POWER      = 7,
+        FACTORIAL  = 8,
     }
 }

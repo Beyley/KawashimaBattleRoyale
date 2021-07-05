@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EeveeTools.Servers.WebSockets;
 using KawashimaBattleRoyaleCommon;
 using KawashimaBattleRoyaleCommon.Packets;
@@ -49,7 +50,7 @@ namespace KawashimaBattleRoyaleServer {
                     Server.NotifyClientAboutAll(this);
                     Server.Players.Add(this);
                     Server.NotifyAllAboutLogin(this);
-                    Console.WriteLine($"{packet.username} is logged in!");
+                    Console.WriteLine($"{packet.username} has logged in!");
 
                     break;
                 }
@@ -75,6 +76,22 @@ namespace KawashimaBattleRoyaleServer {
                     
                     break;
                 }
+                case PacketType.LEARNER_SEND_QUESTION: {
+                    LearnerSendQuestionPacket packet = new(0);
+                    packet.Deserialize(clientData);
+
+                    if (Server.IngamePlayers.Count <= 1) return;
+
+                    List<Client> temporaryList = new(Server.IngamePlayers);
+                    temporaryList.Remove(this);
+                    temporaryList = new(temporaryList);
+                    
+                    Client client = temporaryList[Server.r.Next(temporaryList.Count)];
+
+                    client.SendQuestion(packet.type);
+
+                    break;
+                }
                 default: {
                     Console.WriteLine($"Unhandled packet {tempPacket.PacketType}!");
                     
@@ -83,6 +100,12 @@ namespace KawashimaBattleRoyaleServer {
             }
         }
 
+        public void SendQuestion(ProblemTypes type) {
+            DrKawashimaSendQuestionPacket packet = new (type);
+
+            this.Connection.Send(packet.Serialize());
+        }
+        
         public void NotifyAboutLogout(Client client) {
             DrKawashimaLearnerLogoutPacket packet = new DrKawashimaLearnerLogoutPacket(client.player.UserId);
 
@@ -112,8 +135,10 @@ namespace KawashimaBattleRoyaleServer {
         }
         
         public void Logout() {
-            Console.WriteLine($"{this.player.Username} is logging out!");
+            Console.WriteLine($"{this.player.Username} has logged out!");
+            
             Server.Players.Remove(this);
+            Server.IngamePlayers.Remove(this);
 
             foreach (Client client in Server.Players) {
                 client.NotifyAboutLogout(this);
