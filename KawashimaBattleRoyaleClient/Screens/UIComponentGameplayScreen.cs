@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KawashimaBattleRoyaleCommon;
@@ -287,7 +288,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
                 case ProblemTypes.DIVIDE: {
                     int max;
 
-                    if (State.Level <= 10)
+                    if (State.Level <= 15)
                         max = 5;
                     else
                         max = 10;
@@ -310,6 +311,106 @@ namespace KawashimaBattleRoyaleClient.Screens {
 
                     finalString = finalString.Remove(finalString.Length - 3);
                     finalString += " = ?";
+
+                    nextAnswers.Enqueue(new (finalString, result, type));
+                    // Console.WriteLine("adding");
+                    
+                    break;
+                }
+                case ProblemTypes.MODULO: {
+                    int max;
+
+                    if (State.Level <= 15)
+                        max = 5;
+                    else
+                        max = 10;
+
+                    int terms = 2;
+                    int result = 0;
+
+                    string finalString = "";
+                    
+                    for (int i = 0; i < terms; i++) {
+                        int term = r.Next(max);
+                        
+                        if (i == 0)
+                            result = term;
+                        else
+                            result %= term;
+
+                        finalString += $"{term} % ";
+                    }
+
+                    finalString = finalString.Remove(finalString.Length - 3);
+                    finalString += " = ?";
+
+                    nextAnswers.Enqueue(new (finalString, result, type));
+                    // Console.WriteLine("adding");
+                    
+                    break;
+                }
+                case ProblemTypes.SQUAREROOT: {
+                    int max;
+
+                    if (State.Level <= 15)
+                        max = 10;
+                    else
+                        max = 15;
+
+                    string finalString = "";
+                    
+                    double result = Math.Sqrt(r.Next(max));
+
+                    finalString = $"√{result}";
+
+                    nextAnswers.Enqueue(new (finalString, result, type));
+                    // Console.WriteLine("adding");
+                    
+                    break;
+                }
+                case ProblemTypes.POWER: {
+                    int max;
+
+                    if (State.Level <= 20)
+                        max = 5;
+                    else
+                        max = 10;
+
+                    int terms = 2;
+                    int result = 0;
+
+                    string finalString = "";
+                    
+                    for (int i = 0; i < terms; i++) {
+                        int term = r.Next(max);
+                        
+                        if (i == 0)
+                            result = term;
+                        else
+                            result %= term;
+
+                        finalString += $"{term} ^ ";
+                    }
+
+                    finalString = finalString.Remove(finalString.Length - 3);
+                    finalString += " = ?";
+
+                    nextAnswers.Enqueue(new (finalString, result, type));
+                    // Console.WriteLine("adding");
+                    
+                    break;
+                }
+                case ProblemTypes.FACTORIAL: {
+                    int max;
+
+                    if (State.Level <= 30)
+                        max = 6;
+                    else
+                        max = 12;
+
+                    double result = Enumerable.Range(1, r.Next(max)).Aggregate(1, (p, item) => p * item);
+
+                    string finalString = $"{result}!";
 
                     nextAnswers.Enqueue(new (finalString, result, type));
                     // Console.WriteLine("adding");
@@ -341,11 +442,11 @@ namespace KawashimaBattleRoyaleClient.Screens {
             this.flashText.Transformations.Add(new(TransformationType.Fade, 1, 0, pKawashimaGame.GetTime(ClockTypes.Game), pKawashimaGame.GetTime(ClockTypes.Game) + duration));
         }
         
-        public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
-
-            // this.renderer.EmitterLocation = InputManager.CursorPosition;
-        }
+        // public override void Update(GameTime gameTime) {
+        //     base.Update(gameTime);
+        //
+        //     // this.renderer.EmitterLocation = InputManager.CursorPosition;
+        // }
 
         protected override void Dispose(bool disposing) {
             this.SpriteManager.Dispose();

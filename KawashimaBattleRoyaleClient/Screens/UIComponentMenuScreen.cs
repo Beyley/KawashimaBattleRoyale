@@ -38,10 +38,10 @@ namespace KawashimaBattleRoyaleClient.Screens {
                 } else
                     NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You are already online!", 5000);
             });
-            y += 35;
+            y += 45;
             this.SpriteManager.Add(button.SpriteCollection);
 
-            usernameInputBox = new pTextBox("username", 15, new Vector2(10, y), new Vector2(150, 25), 1);
+            usernameInputBox = new pTextBox("username", 15, new Vector2(10, y), new Vector2(200, 30), 1);
             y += 35;
             this.SpriteManager.Add(usernameInputBox.SpriteCollection);
             
