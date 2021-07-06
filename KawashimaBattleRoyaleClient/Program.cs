@@ -1,10 +1,9 @@
-﻿using System;
-
-namespace KawashimaBattleRoyaleClient {
-    class Program {
-        static void Main(string[] args) {
-            using (var game = new pKawashimaGame())
-                game.Run();
-        }
-    }
+﻿namespace KawashimaBattleRoyaleClient {
+	internal class Program {
+		private static void Main(string[] args) {
+			using (var game = new pKawashimaGame()) {
+				game.Run();
+			}
+		}
+	}
 }

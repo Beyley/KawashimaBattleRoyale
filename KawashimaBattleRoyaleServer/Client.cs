@@ -7,147 +7,146 @@ using KawashimaBattleRoyaleCommon.Packets.Dr._Kawashima;
 using KawashimaBattleRoyaleCommon.Packets.Learner;
 
 namespace KawashimaBattleRoyaleServer {
-    public class Client : WebSocketHandler {
-        public Player player = new Player("", -1, false);
+	public class Client : WebSocketHandler {
+		public Player player = new("", -1, false);
 
-        protected override void OnConnectionOpen() {
-            Console.WriteLine("Client Connected!");
-        }
-        
-        protected override void OnBinaryData(byte[] data) {
-            // throw new NotImplementedException();
-        }
-        
-        protected override void OnConnectionClose() {
-            Logout();
-        }
-        
-        protected override void OnConnectionError(Exception error) {
-            Logout();
-        }
-        
-        protected override void OnMessage(string clientData) {
-            Packet tempPacket = new BlankPacket();
-            tempPacket.Deserialize(clientData);
+		protected override void OnConnectionOpen() {
+			Console.WriteLine("Client Connected!");
+		}
 
-            if (player.Username == null && tempPacket.PacketType != PacketType.LEARNER_LOGIN) {
-                this.Connection.Close();
-                return;
-            }
-            
-            switch (tempPacket.PacketType) {
-                case PacketType.LEARNER_LOGIN: {
-                    LearnerLoginPacket packet = new(null, null);
-                    packet.Deserialize(clientData);
-                    // Console.WriteLine($"{packet.username} is logging in!");
+		protected override void OnBinaryData(byte[] data) {
+			// throw new NotImplementedException();
+		}
 
-                    this.player.Username = packet.username;
-                    if (!CheckPassword(packet.password)) {
-                        this.Connection.Close();
-                        return;
-                    }
+		protected override void OnConnectionClose() {
+			this.Logout();
+		}
 
-                    Server.NotifyClientAboutAll(this);
-                    Server.Players.Add(this);
-                    Server.NotifyAllAboutLogin(this);
-                    Console.WriteLine($"{packet.username} has logged in!");
+		protected override void OnConnectionError(Exception error) {
+			this.Logout();
+		}
 
-                    break;
-                }
-                case PacketType.LEARNER_LOGOUT: {
-                    Logout();
-                    
-                    break;
-                }
-                case PacketType.LEARNER_JOIN_GAME: {
-                    this.player.Ingame = true;
+		protected override void OnMessage(string clientData) {
+			Packet tempPacket = new BlankPacket();
+			tempPacket.Deserialize(clientData);
 
-                    Server.NotifyAllAboutClientJoin(this);
-                    SendGameData();
-                    Server.IngamePlayers.Add(this);
-                    
-                    break;
-                }
-                case PacketType.LEARNER_LEAVE_GAME: {
-                    this.player.Ingame = false;
-                    
-                    Server.NotifyAllAboutClientLeave(this);
-                    Server.IngamePlayers.Remove(this);
-                    
-                    break;
-                }
-                case PacketType.LEARNER_SEND_QUESTION: {
-                    LearnerSendQuestionPacket packet = new(0);
-                    packet.Deserialize(clientData);
+			if (this.player.Username == null && tempPacket.PacketType != PacketType.LEARNER_LOGIN) {
+				this.Connection.Close();
+				return;
+			}
 
-                    if (Server.IngamePlayers.Count <= 1) return;
+			switch (tempPacket.PacketType) {
+				case PacketType.LEARNER_LOGIN: {
+					LearnerLoginPacket packet = new(null, null);
+					packet.Deserialize(clientData);
+					// Console.WriteLine($"{packet.username} is logging in!");
 
-                    List<Client> temporaryList = new(Server.IngamePlayers);
-                    temporaryList.Remove(this);
-                    temporaryList = new(temporaryList);
-                    
-                    Client client = temporaryList[Server.r.Next(temporaryList.Count)];
+					this.player.Username = packet.username;
+					if (!this.CheckPassword(packet.password)) {
+						this.Connection.Close();
+						return;
+					}
 
-                    client.SendQuestion(packet.type);
+					Server.NotifyClientAboutAll(this);
+					Server.Players.Add(this);
+					Server.NotifyAllAboutLogin(this);
+					Console.WriteLine($"{packet.username} has logged in!");
 
-                    break;
-                }
-                default: {
-                    Console.WriteLine($"Unhandled packet {tempPacket.PacketType}!");
-                    
-                    break;
-                }
-            }
-        }
+					break;
+				}
+				case PacketType.LEARNER_LOGOUT: {
+					this.Logout();
 
-        public void SendQuestion(ProblemTypes type) {
-            DrKawashimaSendQuestionPacket packet = new (type);
+					break;
+				}
+				case PacketType.LEARNER_JOIN_GAME: {
+					this.player.Ingame = true;
 
-            this.Connection.Send(packet.Serialize());
-        }
-        
-        public void NotifyAboutLogout(Client client) {
-            DrKawashimaLearnerLogoutPacket packet = new DrKawashimaLearnerLogoutPacket(client.player.UserId);
+					Server.NotifyAllAboutClientJoin(this);
+					this.SendGameData();
+					Server.IngamePlayers.Add(this);
 
-            this.Connection.Send(packet.Serialize());
-        }
+					break;
+				}
+				case PacketType.LEARNER_LEAVE_GAME: {
+					this.player.Ingame = false;
 
-        public void NotifyAboutLogin(Client client) {
-            DrKawashimaLearnerLoginPacket packet = new DrKawashimaLearnerLoginPacket(client.player.Username, client.player.UserId, client.player.Ingame);
+					Server.NotifyAllAboutClientLeave(this);
+					Server.IngamePlayers.Remove(this);
 
-            this.Connection.Send(packet.Serialize());
-        }
-        
-        public void NotifyAboutClientJoin(Client client) {
-            DrKawashimaLearnerJoinPacket packet = new DrKawashimaLearnerJoinPacket(client.player.UserId);
+					break;
+				}
+				case PacketType.LEARNER_SEND_QUESTION: {
+					LearnerSendQuestionPacket packet = new(0);
+					packet.Deserialize(clientData);
 
-            this.Connection.Send(packet.Serialize());
-        }
-        
-        public void NotifyAboutClientLeave(Client client) {
-            DrKawashimaLearnerLeavePacket packet = new DrKawashimaLearnerLeavePacket(client.player.UserId);
+					if (Server.IngamePlayers.Count <= 1) return;
 
-            this.Connection.Send(packet.Serialize());
-        }
+					List<Client> temporaryList = new(Server.IngamePlayers);
+					temporaryList.Remove(this);
+					temporaryList = new(temporaryList);
 
-        public void SendGameData() {
-            //TODO IMPLEMENT THIS
-        }
-        
-        public void Logout() {
-            Console.WriteLine($"{this.player.Username} has logged out!");
-            
-            Server.Players.Remove(this);
-            Server.IngamePlayers.Remove(this);
+					var client = temporaryList[Server.r.Next(temporaryList.Count)];
 
-            foreach (Client client in Server.Players) {
-                client.NotifyAboutLogout(this);
-            }
-        }
-        
-        public bool CheckPassword(string password) {
-            //TODO IMPLEMENT THIS
-            return true;
-        }
-    }
+					client.SendQuestion(packet.type);
+
+					break;
+				}
+				default: {
+					Console.WriteLine($"Unhandled packet {tempPacket.PacketType}!");
+
+					break;
+				}
+			}
+		}
+
+		public void SendQuestion(ProblemTypes type) {
+			DrKawashimaSendQuestionPacket packet = new(type);
+
+			this.Connection.Send(packet.Serialize());
+		}
+
+		public void NotifyAboutLogout(Client client) {
+			var packet = new DrKawashimaLearnerLogoutPacket(client.player.UserId);
+
+			this.Connection.Send(packet.Serialize());
+		}
+
+		public void NotifyAboutLogin(Client client) {
+			var packet = new DrKawashimaLearnerLoginPacket(client.player.Username, client.player.UserId, client.player.Ingame);
+
+			this.Connection.Send(packet.Serialize());
+		}
+
+		public void NotifyAboutClientJoin(Client client) {
+			var packet = new DrKawashimaLearnerJoinPacket(client.player.UserId);
+
+			this.Connection.Send(packet.Serialize());
+		}
+
+		public void NotifyAboutClientLeave(Client client) {
+			var packet = new DrKawashimaLearnerLeavePacket(client.player.UserId);
+
+			this.Connection.Send(packet.Serialize());
+		}
+
+		public void SendGameData() {
+			//TODO IMPLEMENT THIS
+		}
+
+		public void Logout() {
+			Console.WriteLine($"{this.player.Username} has logged out!");
+
+			Server.Players.Remove(this);
+			Server.IngamePlayers.Remove(this);
+
+			foreach (var client in Server.Players)
+				client.NotifyAboutLogout(this);
+		}
+
+		public bool CheckPassword(string password) {
+			//TODO IMPLEMENT THIS
+			return true;
+		}
+	}
 }
