@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using KawashimaBattleRoyaleCommon;
 using Microsoft.Xna.Framework;
 using PeppyCodeEngineGL.Engine;
+using PeppyCodeEngineGL.Engine.Graphics;
 using PeppyCodeEngineGL.Engine.Graphics.Sprites;
 using PeppyCodeEngineGL.Engine.Graphics.UserInterface;
 
 namespace KawashimaBattleRoyaleClient.Screens {
-	public class UIComponentGameplayScreen : DrawableGameComponent {
+	public class UIComponentGameplayScreen : Screen {
 		private Tuple<string, double, bool, ProblemTypes> currentAnswer = new("", double.NaN, true, 0);
 
 		private pText currentProblem;

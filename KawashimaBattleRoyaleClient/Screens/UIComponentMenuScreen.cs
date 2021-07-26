@@ -1,12 +1,14 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using PeppyCodeEngineGL.Engine;
+using PeppyCodeEngineGL.Engine.Graphics;
 using PeppyCodeEngineGL.Engine.Graphics.Notifications;
 using PeppyCodeEngineGL.Engine.Graphics.Sprites;
 using PeppyCodeEngineGL.Engine.Graphics.UserInterface;
+using PeppyCodeEngineGL.Engine.State;
 
 namespace KawashimaBattleRoyaleClient.Screens {
-	public class UIComponentMenuScreen : DrawableGameComponent {
+	public class UIComponentMenuScreen : Screen {
 		public pText onlineUserCount;
 
 		protected SpriteManager SpriteManager = new();
@@ -52,7 +54,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
 						pKawashimaGame.GameplayScreen = new UIComponentGameplayScreen();
 					}
 
-					pEngineGame.ChangeMode(pKawashimaGame.GameplayScreen);
+					ScreenManager.ChangeScreen(pKawashimaGame.GameplayScreen);
 				}
 				else {
 					NotificationManager.CreateNotification(NotificationManager.NotificationType.LeftBlob, Color.Red, "You need to be logged in!", 5000);
