@@ -151,7 +151,7 @@ namespace KawashimaBattleRoyaleClient.Screens {
 			// Console.WriteLine("tick");
 			this.GenerateNewProblem();
 
-			((AutoResetEvent) stateInfo!)?.Set();
+			((AutoResetEvent) stateInfo!).Set();
 		}
 
 		public void ResetTimer() {

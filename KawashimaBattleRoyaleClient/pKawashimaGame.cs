@@ -1,4 +1,5 @@
 using KawashimaBattleRoyaleClient.Screens;
+using Microsoft.Xna.Framework;
 using PeppyCodeEngineGL.Engine;
 
 namespace KawashimaBattleRoyaleClient {
@@ -15,6 +16,8 @@ namespace KawashimaBattleRoyaleClient {
 			OnlineManager = new OnlineHandler("ws://127.0.0.1:1231/kawashima/");
 			// Socket.Connect();
 
+			ChangeClearColor(Color.MediumPurple);
+			
 			base.Initialize();
 		}
 	}
